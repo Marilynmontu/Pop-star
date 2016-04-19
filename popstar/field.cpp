@@ -1,5 +1,7 @@
 #include "field.h"
+#include <ctime>
 #include <algorithm>
+#include <random>
 #include <QtGlobal>
 
 Field::Field(int cols, int rows)
@@ -9,16 +11,6 @@ Field::Field(int cols, int rows)
 {
     // 把 grids 数组填充为 0
     std::fill(&m_grids[0], &m_grids[cols * rows], 0);
-
-    // 测试的情况是：把最底行全填为1，把倒数第2行的一半填为2
-    // 0 表示什么都没有
-    // 1 2 表示不同的颜色
-    for (int i = 0; i < cols; i++) {
-        grid(i, rows - 1) = 1;
-    }
-    for (int i = 0; i < cols / 2; i++) {
-        grid(i, rows - 2) = 2;
-    }
 }
 
 Field::~Field()
@@ -34,4 +26,20 @@ int &Field::grid(int col, int row)
 
     // 这里是把一个一维的数组当成二维用
     return m_grids[row * m_cols + col];
+}
+
+void Field::generate()
+{
+    // 声明一个对象：默认的随机数引擎（C++ 11 新增）
+    // 用当前系统时间作为它的种子，保证每次都不同
+    std::default_random_engine e(static_cast<unsigned int>(time(NULL)));
+
+    // 声明一个均匀分布
+    std::uniform_int_distribution<int> u(1, 5);
+
+    for (int ix = 0; ix < m_cols; ix++) {
+        for (int iy = 0; iy < m_rows; iy++) {
+            grid(ix, iy) = u(e);
+        }
+    }
 }

@@ -20,3 +20,6 @@ HEADERS  += mainwindow.h \
     field.h
 
 FORMS    += mainwindow.ui
+
+# 启用 C++ 11 支持（以使用随机数引擎）
+QMAKE_CXXFLAGS += -std=c++11

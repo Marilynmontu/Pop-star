@@ -13,6 +13,9 @@ public:
     int cols() const { return m_cols; }
     int rows() const { return m_rows; }
 
+    // 生成随机棋盘
+    void generate();
+
 private:
     int m_cols, m_rows;
     int *m_grids;
