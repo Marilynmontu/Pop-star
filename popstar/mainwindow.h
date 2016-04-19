@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "Field.h"
 
 namespace Ui {
 class MainWindow;
@@ -18,6 +19,8 @@ public:
 private:
     Ui::MainWindow *ui;
     void paintEvent(QPaintEvent*) override;
+
+    Field *m_field;
 };
 
 #endif // MAINWINDOW_H
