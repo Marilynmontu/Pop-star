@@ -18,9 +18,12 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    Field *m_field;
+    int m_cur_col, m_cur_row;
+
     void paintEvent(QPaintEvent*) override;
     void mouseMoveEvent(QMouseEvent*)override;
-    Field *m_field;
+
     QRect rectFromLoc(int col, int row);
 };
 
