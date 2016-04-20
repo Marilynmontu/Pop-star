@@ -19,8 +19,9 @@ public:
 private:
     Ui::MainWindow *ui;
     void paintEvent(QPaintEvent*) override;
-
+    void mouseMoveEvent(QMouseEvent*)override;
     Field *m_field;
+    QRect rectFromLoc(int col, int row);
 };
 
 #endif // MAINWINDOW_H

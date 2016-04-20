@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QPainter>
-
+#include <QMouseEvent>
+#include <QDebug>
+const int GRID_SIZE = 40;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -10,6 +12,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_field = new Field(10, 10);
     m_field->generate();
+
+    centralWidget()->setAttribute(Qt::WA_TransparentForMouseEvents);
+    setMouseTracking(true);
+
 }
 
 MainWindow::~MainWindow()
@@ -20,7 +26,7 @@ MainWindow::~MainWindow()
 }
 void MainWindow::paintEvent(QPaintEvent *)
 {
-    const int GRID_SIZE = 40;
+
 
     // 颜色查找表
     static QColor colorTable[] = {
@@ -48,4 +54,15 @@ void MainWindow::paintEvent(QPaintEvent *)
 
         }
     }
+}
+void MainWindow::mouseMoveEvent(QMouseEvent *e)
+{
+    QPoint pt=e->pos();
+    int col = pt.x()/40;
+    int row = pt.y()/40;
+    qDebug() << col << row ;
+}
+QRect MainWindow:: rectFromLoc(int col, int row)
+{
+     return QRect(row* GRID_SIZE,col* GRID_SIZE,40,40);
 }

@@ -16,6 +16,8 @@ public:
     // 生成随机棋盘
     void generate();
 
+
+
 private:
     int m_cols, m_rows;
     int *m_grids;
