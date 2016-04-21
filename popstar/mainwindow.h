@@ -22,7 +22,7 @@ private:
     int m_cur_col, m_cur_row;
 
     void paintEvent(QPaintEvent*) override;
-    void mouseMoveEvent(QMouseEvent*)override;
+    void mousePressEvent(QMouseEvent*)override;
 
     QRect rectFromLoc(int col, int row);
 };

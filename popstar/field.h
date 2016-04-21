@@ -1,6 +1,11 @@
 #ifndef FIELD_H
 #define FIELD_H
-
+#include <vector>
+struct Loc
+{
+    int col,row;
+    Loc(int col_,int row_):col(col_),row(row_){}
+};
 
 class Field
 {
@@ -21,6 +26,8 @@ public:
 private:
     int m_cols, m_rows;
     int *m_grids;
+    std::vector<Loc>m_connected;
+    void dfs(int col,int row,bool *vis,int color);
 };
 
 #endif // FIELD_H

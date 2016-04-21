@@ -73,19 +73,22 @@ void MainWindow::paintEvent(QPaintEvent *)
         p.drawRect(rect);
     }
 }
-void MainWindow::mouseMoveEvent(QMouseEvent *e)
+void MainWindow::mousePressEvent(QMouseEvent *e)
 {
     QPoint pt = e->pos();
-    int col = pt.x() / 40;
-    int row = pt.y() / 40;
+    int col = pt.x() / GRID_SIZE;
+    int row = pt.y() / GRID_SIZE;
 
     // 与上次相比，所在的格子发生了变化
-    if (col != m_cur_col || row != m_cur_row) {
+    if (col != m_cur_col || row != m_cur_row||col>=9||row>=9) {
         // [TODO] 检测是不是在区域内？
-
+       if(col >=0&& col <=9&&row >=0&&row<=9)
+       {
         m_cur_col = col;
         m_cur_row = row;
-
+       }
+       else
+       m_cur_col = m_cur_row = -1;
         // 显示新坐标
         qDebug() << m_cur_col << m_cur_row;
 

@@ -43,5 +43,7 @@ void Field::generate()
         }
     }
 }
+void Field::dfs(int col,int row,bool *vis,int color)
+{}
 
 
