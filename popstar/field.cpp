@@ -43,7 +43,61 @@ void Field::generate()
         }
     }
 }
-void Field::dfs(int col,int row,bool *vis,int color)
-{}
 
+void Field::dfs(int col, int row, bool *vis, int color)
+{
+    // 这个位置存在吗
+    if (col < 0 || col >= m_cols || row < 0 || row >= m_rows)
+        return;
 
+    // 如果，之前已经遍历过
+    if (vis[row * m_cols + col])
+        return;
+
+    // 色不同不相为谋
+    if (grid(col, row) != color)
+        return;
+
+    // 标记
+    vis[row * m_cols + col] = true;
+
+    // 加入列表
+    m_connected.push_back(Loc(col, row));
+
+    dfs(col + 1, row, vis, color); // 右
+    dfs(col, row + 1, vis, color); // 下
+    dfs(col - 1, row, vis, color); // 左
+    dfs(col, row - 1, vis, color); // 上
+}
+
+void Field::find_connected(int col, int row)
+{
+    // 首先必须是有颜色的方块
+    if (grid(col, row) == 0)
+        return;
+
+    // 分配一个布尔数组，用于存储标记
+    bool *vis = new bool[m_rows * m_cols];
+
+    // 初始化成全没有标记
+    std::fill(vis, vis + (m_rows * m_cols), false);
+
+    // 进行dfs
+    dfs(col, row, vis, grid(col, row));
+
+    // 释放数组
+    delete[] vis;
+}
+
+void Field::clear_connected()
+{
+    m_connected.clear();
+}
+
+void Field::eliminate()
+{
+    for (auto iter = m_connected.begin(); iter != m_connected.end(); iter++) {
+        grid(iter->col, iter->row) = 0;
+    }
+    m_connected.clear();
+}

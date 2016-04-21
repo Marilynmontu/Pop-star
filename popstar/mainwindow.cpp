@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QDebug>
+#include <algorithm>
 
 // 让MainWindow能在鼠标不按下时就跟踪鼠标轨迹，可以参考这里：
 // http://stackoverflow.com/questions/9638420/qmainwindow-not-tracking-mouse-with-setmousetracking
@@ -69,8 +70,13 @@ void MainWindow::paintEvent(QPaintEvent *)
     p.setBrush(Qt::NoBrush);
 
     if (m_cur_col >= 0) {
-        QRect rect = rectFromLoc(m_cur_col, m_cur_row);
-        p.drawRect(rect);
+        // 描出所有连通的方块
+        auto connected = m_field->connected();
+        for (auto iter = connected.begin(); iter != connected.end(); iter++) {
+            // [QUESTION] 为什么可以这样用迭代器？
+            QRect rect = rectFromLoc(iter->col, iter->row);
+            p.drawRect(rect);
+        }
     }
 }
 void MainWindow::mousePressEvent(QMouseEvent *e)
@@ -79,16 +85,28 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
     int col = pt.x() / GRID_SIZE;
     int row = pt.y() / GRID_SIZE;
 
+    // [TODO] 如果这次点的格子与上次点的格子，处于同一连通块，那么可以考虑消去了
+    auto connected = m_field->connected();
+    if (std::find(connected.begin(), connected.end(), Loc(col, row)) != connected.end()) {
+        m_field->eliminate();
+        repaint();
+        return;
+    }
+
     // 与上次相比，所在的格子发生了变化
-    if (col != m_cur_col || row != m_cur_row||col>=9||row>=9) {
-        // [TODO] 检测是不是在区域内？
-       if(col >=0&& col <=9&&row >=0&&row<=9)
-       {
-        m_cur_col = col;
-        m_cur_row = row;
-       }
-       else
-       m_cur_col = m_cur_row = -1;
+    if (col != m_cur_col || row != m_cur_row) {
+        // 检测是不是在区域内？
+        if(col >= 0 && col <= 9 && row >= 0 && row<=9) {
+            m_cur_col = col;
+            m_cur_row = row;
+
+            // 查找临接方块
+            m_field->clear_connected();
+            m_field->find_connected(col, row);
+        } else {
+            m_cur_col = m_cur_row = -1;
+        }
+
         // 显示新坐标
         qDebug() << m_cur_col << m_cur_row;
 
