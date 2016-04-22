@@ -87,8 +87,8 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
 
     // [TODO] 如果这次点的格子与上次点的格子，处于同一连通块，那么可以考虑消去了
     auto connected = m_field->connected();
-    if (std::find(connected.begin(), connected.end(), Loc(col, row)) != connected.end()) {
-        m_field->eliminate();
+    if (std::find(connected.begin(), connected.end(), Loc(col, row)) != connected.end()&&connected.size()!=1) {
+        m_field->eliminate();m_field->shrink();
         repaint();
         return;
     }
@@ -112,7 +112,9 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
 
         // 告诉窗体重新画图，相当于间接调用了 paintEvent
         repaint();
+
     }
+
 }
 
 QRect MainWindow::rectFromLoc(int col, int row)

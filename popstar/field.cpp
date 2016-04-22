@@ -101,3 +101,53 @@ void Field::eliminate()
     }
     m_connected.clear();
 }
+bool Field::validate(int col, int row)
+{
+    return (col>=0&&col<m_cols&&row>=0&&row<m_rows);
+}
+
+void Field::shrink()
+{
+    int read_col=0;
+    int write_col=0;
+    for(read_col=0;read_col<m_cols;read_col++)
+    {
+        bool cleared = true;
+        for (int row = 0; row < m_rows; row++) {
+            if (grid(read_col, row) != 0) {
+                cleared = false;
+                break;
+            }
+        }
+        if(cleared)  continue;
+        else
+        {
+            if (read_col > write_col){
+           for (int row = 0; row < m_rows; row++)
+               grid(write_col, row) = grid(read_col, row);
+           for (int row = 0; row < m_rows; row++)
+               grid(read_col, row) = 0;
+
+            }
+            write_col++;
+        }
+    }
+
+    for( int col=0;col < m_cols;col++)
+    {
+        int read_row=0;int write_row=m_rows-1;
+        for(read_row=m_rows-1;read_row>=0;read_row--)
+        {
+            if(grid(col,read_row)==0)continue;
+            else
+            {
+                if(read_row<write_row)
+                {
+                grid(col,write_row)=grid(col,read_row);
+                grid(col,read_row)=0;
+                }
+                write_row--;
+            }
+        }
+    }
+}

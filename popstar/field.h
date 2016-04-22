@@ -34,6 +34,8 @@ public:
 
     // 简单的“消去”
     void eliminate();
+    //收缩方块
+    void shrink();
 
 private:
     int m_cols, m_rows;
@@ -41,6 +43,7 @@ private:
 
     std::vector<Loc> m_connected;
     void dfs(int col, int row, bool *vis, int color);
+    bool validate(int col,int row);
 };
 
 #endif // FIELD_H
