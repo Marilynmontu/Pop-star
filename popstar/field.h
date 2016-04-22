@@ -28,14 +28,18 @@ public:
     void generate();
 
     // 从某块开始，查找与它连通的块
-    void find_connected(int col, int row);
+    void findConnected(int col, int row);
     // 清空连通列表
-    void clear_connected();
+    void clearConnected();
 
     // 简单的“消去”
     void eliminate();
-    //收缩方块
+
+    // 收缩方块
     void shrink();
+
+    // 判定GameOver
+    bool hasMoreElim();
 
 private:
     int m_cols, m_rows;

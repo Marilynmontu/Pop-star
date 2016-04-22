@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QDebug>
+#include <QMessageBox>
 #include <algorithm>
 
 // 让MainWindow能在鼠标不按下时就跟踪鼠标轨迹，可以参考这里：
@@ -85,11 +86,20 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
     int col = pt.x() / GRID_SIZE;
     int row = pt.y() / GRID_SIZE;
 
-    // [TODO] 如果这次点的格子与上次点的格子，处于同一连通块，那么可以考虑消去了
+    // 如果这次点的格子与上次点的格子，处于同一连通块，那么可以考虑消去了
     auto connected = m_field->connected();
-    if (std::find(connected.begin(), connected.end(), Loc(col, row)) != connected.end()&&connected.size()!=1) {
-        m_field->eliminate();m_field->shrink();
+    if (std::find(connected.begin(), connected.end(), Loc(col, row)) != connected.end() && connected.size()!=1) {
+        m_field->eliminate();
+        m_field->shrink();
+
+        m_cur_col = m_cur_row = -1;
         repaint();
+
+        // 画出无法继续的局面时，再提示游戏结束
+        if (!m_field->hasMoreElim()) {
+            QMessageBox::information(this, "Game Over", "游戏结束！", "知道了");
+        }
+
         return;
     }
 
@@ -101,14 +111,14 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
             m_cur_row = row;
 
             // 查找临接方块
-            m_field->clear_connected();
-            m_field->find_connected(col, row);
+            m_field->clearConnected();
+            m_field->findConnected(col, row);
         } else {
             m_cur_col = m_cur_row = -1;
         }
 
         // 显示新坐标
-        qDebug() << m_cur_col << m_cur_row;
+        // qDebug() << m_cur_col << m_cur_row;
 
         // 告诉窗体重新画图，相当于间接调用了 paintEvent
         repaint();

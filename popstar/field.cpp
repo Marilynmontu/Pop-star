@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <random>
 #include <QtGlobal>
+#include <QtDebug>
 
 Field::Field(int cols, int rows)
     : m_cols(cols),
@@ -70,7 +71,7 @@ void Field::dfs(int col, int row, bool *vis, int color)
     dfs(col, row - 1, vis, color); // 上
 }
 
-void Field::find_connected(int col, int row)
+void Field::findConnected(int col, int row)
 {
     // 首先必须是有颜色的方块
     if (grid(col, row) == 0)
@@ -89,7 +90,7 @@ void Field::find_connected(int col, int row)
     delete[] vis;
 }
 
-void Field::clear_connected()
+void Field::clearConnected()
 {
     m_connected.clear();
 }
@@ -101,10 +102,7 @@ void Field::eliminate()
     }
     m_connected.clear();
 }
-bool Field::validate(int col, int row)
-{
-    return (col>=0&&col<m_cols&&row>=0&&row<m_rows);
-}
+
 
 void Field::shrink()
 {
@@ -150,4 +148,38 @@ void Field::shrink()
             }
         }
     }
+}
+
+bool Field::validate(int col, int row)
+{
+    return (col>=0&&col<m_cols&&row>=0&&row<m_rows);
+}
+
+bool Field::hasMoreElim()
+{
+    static Loc vecs[] =
+    {
+        { 1, 0 }, // 右
+        { 0, 1 }, // 下
+        { -1, 0 }, // 左
+        { 0, -1 } // 上
+    };
+
+    for (int row = 0; row < m_rows; row++) {
+        for (int col = 0; col < m_cols; col++) {
+            for (int i = 0; i < 4; i++) {
+                Loc &vec = vecs[i];
+                int color = grid(col, row);
+                if (color == 0)
+                    continue;
+                if (validate(col + vec.col, row + vec.row)
+                    && grid(col + vec.col, row + vec.row) == color)
+                {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
 }
