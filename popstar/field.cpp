@@ -5,10 +5,12 @@
 #include <QtGlobal>
 #include <QtDebug>
 
-Field::Field(int cols, int rows)
+Field::Field(int cols, int rows,int scores)
     : m_cols(cols),
       m_rows(rows),
-      m_grids(new int[cols * rows])
+      m_grids(new int[cols * rows]),
+      m_scores(scores),
+      m_num(cols*rows)
 {
     // 把 grids 数组填充为 0
     std::fill(&m_grids[0], &m_grids[cols * rows], 0);
@@ -182,4 +184,30 @@ bool Field::hasMoreElim()
     }
 
     return false;
+}
+
+void Field::cal_clear_score(int size)
+{
+    m_scores+=20+25*(size-2)+(size-2)*(size-3)*5; //(1+size-3)*(size-3)*10/2 等差数列，从第三个开始每一个方块比前一个方块多加10分
+}
+
+void Field::cal_extra_score(int size)
+{
+    switch(size)
+    {
+    case 0:m_scores+=2000;break;
+    case 1:m_scores+=1980;break;
+    case 2:m_scores+=1920;break;
+    case 3:m_scores+=1680;break;
+    case 4:m_scores+=1500;break;
+    case 5:m_scores+=1280;break;
+    case 6:m_scores+=1020;break;
+    case 7:m_scores+=720;break;
+    case 8:m_scores+=380;break;
+    }
+}
+
+void Field::setNum(int num)
+{
+    m_num=num;
 }

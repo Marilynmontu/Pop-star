@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    m_field = new Field(10, 10);
+    m_field = new Field(10, 10,0);
     m_field->generate();
 
     m_cur_col = m_cur_row = -1;
@@ -85,19 +85,23 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
     QPoint pt = e->pos();
     int col = pt.x() / GRID_SIZE;
     int row = pt.y() / GRID_SIZE;
-
     // 如果这次点的格子与上次点的格子，处于同一连通块，那么可以考虑消去了
     auto connected = m_field->connected();
     if (std::find(connected.begin(), connected.end(), Loc(col, row)) != connected.end() && connected.size()!=1) {
         m_field->eliminate();
         m_field->shrink();
-
+        m_field->cal_clear_score(connected.size());
+        ui->label->setText(QString("score:%1").arg(QString::number(m_field->scores())));
         m_cur_col = m_cur_row = -1;
+        m_field->setNum(m_field->nums()-connected.size());
         repaint();
 
         // 画出无法继续的局面时，再提示游戏结束
         if (!m_field->hasMoreElim()) {
-            QMessageBox::information(this, "Game Over", "游戏结束！", "知道了");
+            QMessageBox::information(this, "Game Over", "游戏结束！","知道了");
+            m_field->cal_extra_score(m_field->nums());
+            ui->label->setText(QString("score:%1").arg(QString::number(m_field->scores())));
+
         }
 
         return;

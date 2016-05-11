@@ -15,13 +15,14 @@ struct Loc
 class Field
 {
 public:
-    Field(int cols, int rows);
+    Field(int cols, int rows,int scores);
     ~Field();
     int &grid(int col, int row);
-
     // 属性访问器
     int cols() const { return m_cols; }
     int rows() const { return m_rows; }
+    int scores() const { return m_scores;}
+    int nums() const {return m_num;}
     std::vector<Loc> &connected() { return m_connected; }
 
     // 生成随机棋盘
@@ -40,11 +41,19 @@ public:
 
     // 判定GameOver
     bool hasMoreElim();
+    //计算消除所得分数
+    void cal_clear_score(int size);
 
+    //计算额外得分
+    void cal_extra_score(int sizes);
+
+    //设置方块数量
+    void setNum(int num);
 private:
     int m_cols, m_rows;
     int *m_grids;
-
+    int m_scores;
+    int m_num;
     std::vector<Loc> m_connected;
     void dfs(int col, int row, bool *vis, int color);
     bool validate(int col,int row);
